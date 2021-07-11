@@ -1,0 +1,289 @@
+<!-- 株式会社南国ソフト様 プログラミング課題3 芝浦工業大学2年 半田優太 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        h1 {
+            text-align: center;
+        }
+        .container {
+            margin: 0 auto;
+            width: 290px;
+            height: 390px;
+            padding: 20px 5px;
+            background-color: rgb(241, 239, 239);
+        }
+        .main-title {
+            text-align: center;
+        }
+        /* 入力バーに関するCSS */
+        #result {
+            width: 274px;
+            margin-left: 7px;
+            border: solid 1px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            text-align: right;
+            padding: 5px 0 5px 0;
+            font-size: 25px;
+        }
+        /* ボタンに関するCSS */
+        input {
+            display: inline-block;
+            height: 40px;
+            width: 50px;
+            width: 20%;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        #large-btn {
+            width: 45%;
+        }
+        .first-row {
+            display: flex;
+            justify-content: space-around;
+        }
+        .second-row {
+            display: flex;
+            justify-content: space-around;
+        }
+        .third-row {
+            display: flex;
+            justify-content: space-around;
+        }
+        .fourth-row {
+            display: flex;
+            justify-content: space-around;
+        }
+        .fifth-row {
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+    <title>Nangoku Task1</title>
+</head>
+<body>
+    <div class="container">
+        <div class="main-title">
+            <h1>電卓</h1>
+        </div>
+        <div class="calculator">
+            <div class="calculation">
+                <input id="result" value="" name="result">
+            </div>      
+            <div class="row">
+                <div class="first-row">
+                    <input id="btn" value="AC" onclick="del()" type="button">
+                    <input id="btn" value="C" onclick="cle()" type="button">
+                    <input value="%" onclick="operate(this)" type="button">
+                    <input value="÷" onclick="operate(this)" type="button">
+                </div>
+                <div class="second-row">
+                    <input value="7" onclick="display(this)" type="button">
+                    <input value="8" onclick="display(this)" type="button">
+                    <input value="9" onclick="display(this)" type="button">
+                    <input value="×" onclick="operate(this)" type="button">
+                </div>
+                <div class="third-row">
+                    <input value="4" onclick="display(this)" type="button">
+                    <input value="5" onclick="display(this)" type="button">
+                    <input value="6" onclick="display(this)" type="button">
+                    <input value="−" onclick="operate(this)" type="button">
+                </div>
+                <div class="fourth-row">
+                    <input value="1" onclick="display(this)" type="button">
+                    <input value="2" onclick="display(this)" type="button">
+                    <input value="3" onclick="display(this)" type="button">
+                    <input value="＋" onclick="operate(this)" type="button">
+                </div>
+                <div class="fifth-row">
+                    <input id="large-btn" value="0" onclick="display(this)" type="button">
+                    <input value="." onclick="demical(this)" type="button">
+                    <input value="=" onclick="calculate(this)" type="button" id="new-todo-item-add-button">
+                </div>
+            </div>
+        </div>
+        <div>
+            <h1>計算情報</h1>
+            <ul id="todo-container">
+
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        var before_element = ''; // 直前の文字
+        var before_element02 = ''; //　後ろから2番目の文字
+        var formula = ''; // JavaScriptで演算可能な数式に変換してformulaに代入
+        var result = document.getElementById('result');
+        // 数式をリセットする
+        del = () =>  {
+            result.value = '';
+        }
+        // 直前の文字を削除する
+        cle = () => {
+            before_element = result.value.slice(-1);
+            if (before_element === ' ') {
+                result.value = result.value.slice(0, result.value.length - 2);
+            } else {
+                result.value = result.value.slice(0, result.value.length - 1);
+            }
+        }
+        // 数値に関する処理
+        display = (number) => {
+            if ('0' === number.value && '0' === result.value) { // 数値が0の時、連続で0を追加しない
+                return;
+            }
+            else { 
+                result.value += number.value;
+            }
+        }
+        // 演算子に関する処理
+        operate = (operator) => {
+            // 数式の先頭に使えない演算子が来たら演算子を追加しない
+            if(result.value === '') {
+                switch (operator.value) {
+                    case '%':
+                        return;
+                    case '/':
+                        return;
+                    case '*':
+                        return;
+                }
+            }
+            // 連続で演算子もしくは小数点が来たら演算子を追加しない
+            var expression = ''; // 画面上で分かりやすい表記にしてexpressionに代入
+            before_element = result.value.slice(-1);
+            before_element02 = result.value.slice(-2);
+            if ('%' === before_element || '÷' === before_element || '×' === before_element || '−' === before_element || '＋' === before_element || '.' === before_element) {
+                return;
+            } else if (' ' === before_element || ('%' === before_element02 || '÷' === before_element02 || '×' === before_element02 || '−' === before_element02 || '＋' === before_element02 || '.' === before_element02)) {
+                return;
+            } else {
+                switch (operator.value) {
+                    case '÷':
+                        expression = ' ÷ '
+                        break;
+                
+                    case '×':
+                        expression = ' × ';
+                        break;
+                }
+                switch (operator.value) {
+                    case '%':
+                        expression = ' % ';
+                        break;
+                
+                    case '−':
+                        expression = ' − ';
+                        break;
+
+                    case '＋':
+                        expression = ' ＋ ';
+                }
+                result.value += expression;
+            }
+        }
+        // 少数(demical)に関する処理
+        demical = (point) => {
+            before_element = result.value.slice(-1);
+            before_element02 = result.value.slice(-2);
+            if (result.value === '') { // 先頭に小数点を追加しない
+                return;
+            } else if ('%' === before_element || '÷' === before_element || '×' === before_element || '−' === before_element || '＋' === before_element || '.' === before_element || ' ' === before_element) {
+                return; // 演算子の次に小数点を追加しない
+            } else if (' ' === before_element && ('%' === before_element02 || '÷' === before_element02 || '×' === before_element02 || '−' === before_element02 || '＋' === before_element02 || '.' === before_element02)) {
+                return;
+            } 
+            else {
+                result.value += point.value;
+            }
+        }
+        // 数式(formula)を計算して出力する
+        calculate = () => {
+            formula = result.value.replace(/＋/g, '+').replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/')
+
+            // 文字列formulaをFunction関数によって計算する
+            fin = Function('"use strict";return ('+formula+')')();
+            if (fin < 0) { // 分かりやすくするために負の演算子を全角表示にする
+                fin = `− ${Math.abs(fin)}`;
+            }
+            lfFormula = result.value;
+            result.value = fin;
+        }
+    </script>
+
+    <script>
+        // TODOリストを描画する関数
+        function renderTodoList(todoList) {
+            // id="todo-container"要素を取得する
+            const todoContainer = document.querySelector('#todo-container');
+
+            // コンテナの中身を全部消す
+            todoContainer.innerHTML = '';
+
+            // JSONの各要素に対して
+            for(const item of todoList) {
+                const li = document.createElement('li');          // リスト要素
+                const label = document.createElement('label');    // ラベル
+                const checkbox = document.createElement('input'); // チェックボックス
+                checkbox.type = 'checkbox';
+                checkbox.checked = item.done;                     // 項目がdoneならチェック
+                const text = new Text(item.title);                // 項目名
+
+                // ラベルにチェックボックスとテキストを追加する
+                label.appendChild(checkbox);
+                label.appendChild(text);
+
+                // リスト要素に先ほどのラベルを追加する
+                li.appendChild(label);
+
+                // TODOリストにリスト要素を追加する
+                todoContainer.appendChild(li);
+            }
+        }
+
+        // APIからTODOリストを取得して描画する関数
+        async function fetchTodoList() {
+            // APIからJSONを取得する
+            return fetch('./api/v1/list')
+                .then((response) => response.json())
+                .then((todoList) => {
+                    renderTodoList(todoList);
+                })
+        }
+
+        // APIに新しいTODOアイテムをPOSTする関数
+        async function postNewTodoItem(todoItem) {
+            // 送信データ'title'にタイトルテキストを追加する
+            const body = new FormData();
+            body.append('title', todoItem.title);
+
+            // Fetch APIを使って、Web APIにPOSTでデータを送信する
+            return fetch('./api/v1/add', {
+                method: 'POST', // POSTメソッドで送信する,
+                body
+            }).then((response) => response.json());
+        }
+
+        // ＝ボタンのインスタンス
+        const newTodoItemTitleInput = document.querySelector('#new-todo-item-add-button');
+
+        // ＝ボタンをクリックしたときに新しいTODO項目をPOSTする
+        newTodoItemTitleInput.addEventListener('click', (event) => {
+            const title = lfFormula + ' ＝ ' + fin;
+
+            // タイトルが空でなければ
+            if(title) {
+                // 項目をPOSTしたあとにリストを更新する
+                postNewTodoItem({title}).then((item) => fetchTodoList());
+            }
+        });
+
+        // 初回データ読み込み
+        fetchTodoList();
+    </script>
+</body>
+</html>
